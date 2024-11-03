@@ -5,6 +5,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 console.log("render-take has started serving with Deno");
 
 Deno.serve(async (req) => {
+  const start = Date.now();
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -80,6 +81,7 @@ Deno.serve(async (req) => {
     img.composite(templateImg);
     const result = await img.encode();
 
+    console.log(`took ${Date.now() - start}ms`);
     return new Response(
       result,
       { headers: { "Content-Type": templateBaseImageRes.type.toString() } },
