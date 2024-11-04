@@ -320,6 +320,7 @@ export default function UserEditor({
                                       }),
                                     }
                                   );
+                                  setPage("pick-from-queue");
                                   setAppState((appState) => {
                                     return {
                                       ...appState,
