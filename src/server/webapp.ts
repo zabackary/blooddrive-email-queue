@@ -164,9 +164,9 @@ export function upload(payload: any) {
   image.setName(`photo_strip.${filenameExtension}`); // switch the name of the image to be more user-friendly
   console.log("sending mail to recipients", recipients);
   for (const recipient of recipients) {
-    const emailName = `${import.meta.env.VITE_EVENT_NAME} Photo Booth`;
+    const emailName = `${import.meta.env.CLIENT_EVENT_NAME} Photo Booth`;
     const emailSubject =
-      `Your recent photos at the ${import.meta.env.VITE_EVENT_NAME} (${
+      `Your recent photos at the ${import.meta.env.CLIENT_EVENT_NAME} (${
         processedDate.getMonth() + 1
       }/${processedDate.getDate()} ${processedDate.getHours()}:${processedDate.getMinutes()})`;
     const emailContent = template(EMAIL_TEMPLATE, {

@@ -295,7 +295,11 @@ export default function UserEditor({
                             const reader = new FileReader();
                             reader.readAsDataURL(renderedBlob);
                             reader.onloadend = function () {
-                              var rendered = reader.result;
+                              let rendered = reader.result?.toString();
+                              rendered = rendered?.replace(
+                                "data:image/png;base64,",
+                                ""
+                              );
                               google.script.run
                                 .withSuccessHandler(async ({ fileId }) => {
                                   const { error } = await supabaseClient
@@ -306,7 +310,7 @@ export default function UserEditor({
                                     })
                                     .eq("id", appState.currentEdit!.id)
                                     .single();
-                                  supabaseClient.functions.invoke(
+                                  await supabaseClient.functions.invoke(
                                     "add-print-queue",
                                     {
                                       body: JSON.stringify({
@@ -314,6 +318,17 @@ export default function UserEditor({
                                       }),
                                     }
                                   );
+                                  setAppState((appState) => {
+                                    return {
+                                      ...appState,
+                                      currentEdit: undefined,
+                                      editingQueue:
+                                        appState.editingQueue.filter(
+                                          (item) =>
+                                            item.id !== appState.currentEdit!.id
+                                        ),
+                                    };
+                                  });
                                 })
                                 .withFailureHandler((err) => {
                                   alert(`something went wrong\n${err}`);

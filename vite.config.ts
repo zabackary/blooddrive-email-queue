@@ -28,7 +28,9 @@ export default defineConfig(async ({ command, mode, ssrBuild: _ssrBuild }) => {
       }"`,
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
       EMAIL_TEMPLATE: JSON.stringify(
-        inline(await readFile("./src/email.html", { encoding: "utf-8" })),
+        inline(
+          await readFile("./src/server/email.html", { encoding: "utf-8" }),
+        ),
       ),
     },
     envPrefix: "CLIENT_",

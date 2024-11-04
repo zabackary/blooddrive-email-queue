@@ -1,10 +1,17 @@
 import { decode, Image } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
 
 console.log("render-take has started serving with Deno");
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(
+      null,
+      { headers: { ...corsHeaders } },
+    );
+  }
   const start = Date.now();
   try {
     const supabase = createClient(
@@ -84,11 +91,19 @@ Deno.serve(async (req) => {
     console.log(`took ${Date.now() - start}ms`);
     return new Response(
       result,
-      { headers: { "Content-Type": templateBaseImageRes.type.toString() } },
+      {
+        headers: {
+          "Content-Type": templateBaseImageRes.headers.get("Content-Type")!,
+          ...corsHeaders,
+        },
+      },
     );
     // deno-lint-ignore no-explicit-any
   } catch (err: any) {
     console.error(err);
-    return new Response(String(err?.message ?? err), { status: 400 });
+    return new Response(String(err?.message ?? err), {
+      status: 400,
+      headers: corsHeaders,
+    });
   }
 });
