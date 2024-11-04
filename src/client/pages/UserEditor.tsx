@@ -306,7 +306,7 @@ export default function UserEditor({
                                     .from("take")
                                     .update({
                                       template: templateId,
-                                      processed_url: `https://drive.google.com/uc?q=${fileId}`,
+                                      processed_url: `https://drive.google.com/uc?id=${fileId}`,
                                     })
                                     .eq("id", appState.currentEdit!.id)
                                     .single();
