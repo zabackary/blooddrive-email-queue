@@ -310,6 +310,8 @@ export default function UserEditor({
                                     })
                                     .eq("id", appState.currentEdit!.id)
                                     .single();
+                                  const currentEditId =
+                                    appState.currentEdit!.id;
                                   await supabaseClient.functions.invoke(
                                     "add-print-queue",
                                     {
@@ -324,8 +326,7 @@ export default function UserEditor({
                                       currentEdit: undefined,
                                       editingQueue:
                                         appState.editingQueue.filter(
-                                          (item) =>
-                                            item.id !== appState.currentEdit!.id
+                                          (item) => item.id !== currentEditId
                                         ),
                                     };
                                   });
