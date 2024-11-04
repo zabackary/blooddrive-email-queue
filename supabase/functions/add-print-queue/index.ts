@@ -1,9 +1,16 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
 
 console.log("add-print-queue has started serving with Deno");
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(
+      null,
+      { headers: { "Content-Type": "application/json", ...corsHeaders } },
+    );
+  }
   if (req.method !== "POST") {
     return new Response("must use POST", { status: 400 });
   }
@@ -13,8 +20,8 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
   );
 
-  const params = new URL(req.url).searchParams;
-  const id = params.get("takeId");
+  const params = await req.json();
+  const id = params["takeId"];
   if (!id) return new Response("need takeId parameter", { status: 400 });
 
   const update = await supabase.from("print_queue_item").insert({
@@ -29,6 +36,6 @@ Deno.serve(async (req) => {
     JSON.stringify({
       ...update,
     }),
-    { headers: { "Content-Type": "application/json" } },
+    { headers: { "Content-Type": "application/json", ...corsHeaders } },
   );
 });

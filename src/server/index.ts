@@ -1,9 +1,9 @@
-import { doGet, doPost } from "./webapp";
+import { doGet, upload } from "./webapp";
 
 topLevelFunction.doGet = doGet;
-topLevelFunction.doPost = doPost;
+topLevelFunction.upload = upload;
 
 export interface ServerGlobals {
   doGet: typeof doGet;
-  doPost: typeof doPost;
+  upload: typeof upload;
 }

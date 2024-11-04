@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{{ subject }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        font-family: Helvetica, Tahoma, Arial, sans-serif;
+      }
+      .body {
+        margin: 1em auto;
+        border-radius: 2em;
+        padding: 1em 2em;
+        background-color: #ccf;
+        color: #003;
+        max-width: 600px;
+        font-size: 16px;
+        line-height: 25px;
+        letter-spacing: -0.2px;
+      }
+      .body b {
+        letter-spacing: -0.8px;
+        font-weight: bold;
+        color: #008;
+      }
+      .footer {
+        margin: 1em auto;
+        border-radius: 2em;
+        padding: 1em;
+        background-color: #eef;
+        max-width: 600px;
+        text-align: center;
+        color: #446;
+        font-size: 12px;
+      }
+      .greeting {
+        font-size: 28px;
+        text-align: center;
+        letter-spacing: -1.5px;
+        font-weight: bold;
+        color: #008;
+      }
+      .version-info {
+        font-style: italic;
+      }
+      .img-container {
+        text-align: center;
+      }
+      img {
+        max-height: 580px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="body">
+      <p class="greeting">Hello there! 👋</p>
+
+      <p>
+        Here are the recent pictures you took at the
+        <b>{{ event_name }} photo booth</b> on <b>{{ time }}</b>. If you used it
+        multiple times, you should have received individual emails for each time
+        you used it.
+      </p>
+      <div class="img-container"><img src="cid:preview" /></div>
+      <p>
+        The images are also attached to this message if you intend to save or
+        print them.
+      </p>
+      <p>{{ privacy_note }}</p>
+
+      <p>
+        Thank you!<br />
+        {{ event_name }}
+      </p>
+    </div>
+    <div class="footer">
+      <p>
+        You're receiving this email because you used the {{ event_name }} photo
+        booth on {{ date }} and entered your email address, {{ recipient }}. No
+        further emails will be sent unless you use the service again.
+      </p>
+      <p>
+        This email was sent automatically. The service disclaims all liability
+        for any content contained therein. To report an issue, please contact {{
+        contact_name }} at {{ contact_email }}.
+      </p>
+      <p>This photo booth was brought to you with 🥰 by {{ contact_name }}</p>
+      <p class="version-info">
+        mailed by photo-booth-email-server {{ version }}
+      </p>
+    </div>
+  </body>
+</html>

@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.22.10",
+    "@css-inline/css-inline": "^0.14.1",
     "@material/material-color-utilities": "^0.2.7",
     "@mui/material": "^5.14.5",
     "@mui/utils": "^5.14.5",

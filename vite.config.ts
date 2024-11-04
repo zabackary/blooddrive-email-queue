@@ -1,6 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { inline } from "@css-inline/css-inline";
 import react from "@vitejs/plugin-react";
 import { exec as nodeExec } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import { defineConfig, loadEnv } from "vite";
@@ -24,6 +26,10 @@ export default defineConfig(async ({ command, mode, ssrBuild: _ssrBuild }) => {
           await exec("git rev-parse --short HEAD")
         ).stdout.trim()
       }"`,
+      APP_VERSION: JSON.stringify(process.env.npm_package_version),
+      EMAIL_TEMPLATE: JSON.stringify(
+        inline(await readFile("./src/email.html", { encoding: "utf-8" })),
+      ),
     },
     envPrefix: "CLIENT_",
     server: {
