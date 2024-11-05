@@ -9,7 +9,7 @@ interface ContextState {
   tokens: M3ColorTokens;
   options: M3TokensGenerationOptions;
 }
-const DEFAULT_THEME_SOURCE_COLOR = "#efa0ff";
+const DEFAULT_THEME_SOURCE_COLOR = "#7a4949";
 const DEFAULT_THEME_MODE: M3ThemeMode = "dark";
 const DEFAULT_CONTEXT_STATE: ContextState = {
   tokens: generateTokensFromSourceColor(
