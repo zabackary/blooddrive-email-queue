@@ -6,6 +6,9 @@ import {
   CircularProgress,
   Collapse,
   Fade,
+  IconButton,
+  Menu,
+  MenuItem,
   Slide,
   Stack,
   Step,
@@ -16,9 +19,15 @@ import {
   useTheme,
 } from "@mui/material";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
 import { setLanguage, t } from "../translations";
+
+function last20Mins() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - 20);
+  return d;
+}
 
 interface TakeModel {
   id: string;
@@ -132,6 +141,9 @@ export default function UserEditor({
       currentEdit: take,
     }));
   };
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuData, setMenuData] = useState<TakeModel[]>([]);
+  const menuRef = useRef<any>(null);
 
   return !appState.config ? (
     "Loading..."
@@ -142,8 +154,100 @@ export default function UserEditor({
       height={"100%"}
       gap={2}
     >
-      <Typography variant="h3">Let's start editing.</Typography>
-      <Stack direction="row">
+      <Typography
+        variant="h3"
+        sx={
+          appState.editingQueue.length === 0
+            ? {
+                position: "fixed",
+                background: "#0008",
+                backdropFilter: "blur(12px)",
+                top: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                borderRadius: 9999,
+                paddingY: 2,
+                paddingX: 4,
+              }
+            : {}
+        }
+      >
+        {appState.editingQueue.length === 0
+          ? "There's nothing to edit right now."
+          : "Let's start editing."}
+      </Typography>
+      <Box
+        sx={
+          appState.editingQueue.length === 0
+            ? {
+                position: "fixed",
+                background: "#0003",
+                backdropFilter: "blur(12px)",
+                top: 120,
+                left: "50%",
+                transform: "translateX(-50%)",
+                borderRadius: 4,
+                paddingY: 2,
+                paddingX: 4,
+              }
+            : {}
+        }
+      >
+        <Typography variant="h2">HS StuCo Photo Booth</Typography>
+      </Box>
+      <IconButton
+        sx={{
+          position: "fixed",
+          zIndex: 99999999,
+          top: 8,
+          left: 8,
+          backgroundColor: "#0007",
+          backdropFilter: "blur(8px)",
+          width: 48,
+          height: 48,
+        }}
+        onClick={() => {
+          setShowMenu(true);
+          supabaseClient
+            .from("take")
+            .select("*")
+            .eq("instance", config.id)
+            .gt("created_at", last20Mins().toISOString())
+            .then(({ error, data }) => {
+              if (error) throw error;
+              setMenuData(data);
+            });
+        }}
+        ref={menuRef}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#e8eaed"
+        >
+          <path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z" />
+        </svg>
+      </IconButton>
+      <Menu
+        open={showMenu}
+        anchorEl={menuRef.current}
+        onClose={() => setShowMenu(false)}
+      >
+        <Typography>Load from API</Typography>
+        {menuData.map((item) => (
+          <MenuItem
+            key={item.id}
+            onClick={() => {
+              startEdit("en-US", item);
+            }}
+          >
+            {item.created_at}
+          </MenuItem>
+        ))}
+      </Menu>
+      <Stack direction="row" width="100%">
         {appState.editingQueue.map((take, i) => (
           <Card variant="filled" key={take.id}>
             <Stack direction={"row"}>
@@ -193,7 +297,12 @@ export default function UserEditor({
           </Card>
         ))}
         {appState.editingQueue.length === 0 ? (
-          <Typography variant="h5">Nothing to edit right now.</Typography>
+          <Box
+            component="iframe"
+            src="https://www.youtube.com/embed/3GN819C9ov8?autoplay=1&cc_load_policy=1&loop=1&rel=0&fs=0&disablekb=1&controls=0&color=white"
+            allow="autoplay"
+            sx={{ width: "100%", aspectRatio: "16 / 9", border: "none" }}
+          />
         ) : null}
       </Stack>
     </Stack>
