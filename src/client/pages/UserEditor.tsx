@@ -516,8 +516,6 @@ export default function UserEditor({
                                   };
                                 });
                               };
-                              handleSuccess({ fileId: "" });
-                              /*
                               google.script.run
                                 .withSuccessHandler(handleSuccess)
                                 .withFailureHandler((err) => {
@@ -527,7 +525,6 @@ export default function UserEditor({
                                 image: rendered,
                                 imageMime: res.headers.get("Content-Type"),
                               });
-                              */
                             };
                           })();
                         }}
