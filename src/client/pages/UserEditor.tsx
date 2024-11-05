@@ -58,19 +58,7 @@ export default function UserEditor({
   config: AppConfig;
 }) {
   const [appState, setAppState] = useState<AppState>(() => ({
-    editingQueue: [
-      {
-        id: "c4bf6d0f-a81f-4fb1-bdcd-a41d5c123ab9",
-        created_at: "2024-11-04 06:30:57.667543+00",
-        raw_urls: [
-          "https://drive.google.com/uc?id=1cbgpAlxihgS3ZO5bOkV-nhJuwkeSU07k",
-          "https://drive.google.com/uc?id=1ORtNI027eH8tkKyhRUX7KzX08KK7i8b5",
-          "https://drive.google.com/uc?id=1HlqyYsaJVA70TKkiYi6xBm29Uk6pw76-",
-          "https://drive.google.com/uc?id=1Sr-f4l3_MqtJ5J80v3PrCBJ8pQXCcWuF",
-        ],
-        instance: "259908fa-7e43-4cad-a047-ef1c5971a139",
-      },
-    ],
+    editingQueue: [],
     currentEdit: undefined,
     config: undefined,
   }));
