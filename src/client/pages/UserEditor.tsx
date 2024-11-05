@@ -247,7 +247,12 @@ export default function UserEditor({
           </MenuItem>
         ))}
       </Menu>
-      <Stack direction="row" width="100%">
+      <Stack
+        direction="column"
+        width="100%"
+        justifyContent="center"
+        alignItems={"center"}
+      >
         {appState.editingQueue.map((take, i) => (
           <Card variant="filled" key={take.id}>
             <Stack direction={"row"}>
@@ -410,6 +415,7 @@ export default function UserEditor({
                               value={email}
                               placeholder="example@example.com"
                               sx={{ marginBottom: 1, width: "100%" }}
+                              autoComplete="off"
                               onChange={(e) => {
                                 setStep3Emails((old) =>
                                   Object.assign([], {
@@ -569,6 +575,7 @@ export default function UserEditor({
             justifyContent: "center",
             gap: 2,
             backgroundColor: theme.palette.background.default,
+            zIndex: 99,
           }}
         >
           <Typography variant="h3">{t("loading")}</Typography>
