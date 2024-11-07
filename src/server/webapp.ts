@@ -41,7 +41,7 @@ export function sendMail(recipient: string, japanese: boolean) {
     msg: japanese
       ? "献血の待合室の席が空きましたので、MPRにお越しください。"
       : "Your turn for the blood drive is coming up soon. Please proceed to the MPR.",
-    thanks: japanese ? "ありがとうございます。" : "Thank you!",
+    thanks: japanese ? "" : "Thank you!",
     recipient,
     event_name: config.eventName,
     contact_name: config.contactName,
