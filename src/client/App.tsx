@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import Admin from "./pages/Admin";
-import UserEditor from "./pages/Display";
+import Display from "./pages/Display";
 import Home from "./pages/Home";
 import { M3ThemeProvider, M3TokensProvider } from "./theme";
+import { SnackbarProvider } from "./useSnackbar";
 
-type PageName = "home" | "display" | "admin";
+type PageName = "home" | "display" | "display-code" | "admin";
 
 export interface AppConfig {
   name: string;
@@ -42,20 +43,38 @@ export default function App() {
   return (
     <M3TokensProvider>
       <M3ThemeProvider>
-        {config ? (
-          page === "home" ? (
-            <Home
-              onAdmin={() => setPage("admin")}
-              onUser={() => setPage("display")}
-            />
-          ) : page === "admin" ? (
-            <Admin supabaseClient={supabaseClient} instanceId={config.id} />
+        <SnackbarProvider
+          defaultSnackbarOptions={{
+            snackbarProps: {
+              anchorOrigin: {
+                horizontal: "center",
+                vertical: "bottom",
+              },
+            },
+          }}
+        >
+          {config ? (
+            page === "home" ? (
+              <Home
+                onAdmin={() => setPage("admin")}
+                onUser={() => setPage("display")}
+                onUserCode={() => setPage("display-code")}
+              />
+            ) : page === "admin" ? (
+              <Admin supabaseClient={supabaseClient} instanceId={config.id} />
+            ) : page === "display-code" ? (
+              <Display
+                supabaseClient={supabaseClient}
+                instanceId={config.id}
+                displayCode
+              />
+            ) : (
+              <Display supabaseClient={supabaseClient} instanceId={config.id} />
+            )
           ) : (
-            <UserEditor supabaseClient={supabaseClient} />
-          )
-        ) : (
-          "Loading..."
-        )}
+            "Loading..."
+          )}
+        </SnackbarProvider>
       </M3ThemeProvider>
     </M3TokensProvider>
   );

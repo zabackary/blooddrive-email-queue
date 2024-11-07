@@ -52,12 +52,16 @@ Deno.serve(async (req) => {
     });
   }
 
-  const update = await supabase.from("queue_item").insert({
-    serial_num: data.current_ticket_number + 1,
-    email,
-    instance: instanceId,
-    japanese,
-  });
+  const update = await supabase
+    .from("queue_item")
+    .insert({
+      serial_num: data.current_ticket_number + 1,
+      email,
+      instance: instanceId,
+      japanese,
+    })
+    .select("serial_num")
+    .single();
 
   if (update.error) {
     return new Response(JSON.stringify(update.error), {
@@ -68,7 +72,7 @@ Deno.serve(async (req) => {
 
   return new Response(
     JSON.stringify({
-      ...update,
+      serial_num: update.data.serial_num,
     }),
     { headers: { "Content-Type": "application/json", ...corsHeaders } }
   );

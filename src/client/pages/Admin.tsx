@@ -8,18 +8,21 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
+  FormControlLabel,
   List,
   ListItem,
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
+  Slide,
   Stack,
   TextField,
+  useTheme,
 } from "@mui/material";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
+import useSnackbar from "../useSnackbar";
 
 export interface QueueItem {
   email: string;
@@ -55,6 +58,15 @@ export default function Admin({
     if (error) {
       alert("Failed to add address.");
     }
+    snackbar.showSnackbar(`Added to the queue: #${data.serial_num}`, {
+      snackbarProps: {
+        TransitionComponent: Slide,
+        anchorOrigin: {
+          horizontal: "center",
+          vertical: "bottom",
+        },
+      },
+    });
     setAddDialogLoading(false);
     setAddDialogOpen(false);
   };
@@ -121,6 +133,7 @@ export default function Admin({
       )
       .subscribe();
   }, []);
+  const snackbar = useSnackbar();
   const markFulfilled = (id: string) => {
     supabaseClient
       .from("queue_item")
@@ -130,7 +143,9 @@ export default function Admin({
       })
       .eq("id", id)
       .single()
-      .then(() => {});
+      .then(() => {
+        snackbar.showSnackbar("Queue item marked as fulfilled.");
+      });
   };
   const deleteItem = (id: string) => {
     supabaseClient
@@ -138,7 +153,9 @@ export default function Admin({
       .delete()
       .eq("id", id)
       .single()
-      .then(() => {});
+      .then(() => {
+        snackbar.showSnackbar("Queue item deleted. This cannot be undone.");
+      });
   };
   const callItem = (id: string) => {
     const realItem = listState.find((state) => state.id === id)!;
@@ -161,22 +178,56 @@ export default function Admin({
         setCallPending(false);
       }).sendMail!(realItem.email, realItem.japanese);
   };
+  const textFieldInputRef = useRef<HTMLInputElement | null>(null);
+  const theme = useTheme();
 
   return (
     <>
-      <Box>
-        <Stack gap={2} margin={2}>
-          <Box textAlign={"center"} position={"sticky"} top={0}>
-            <Button
-              onClick={() => {
-                setAddDialogOpen(true);
-                setAddDialogAddress("");
-              }}
-            >
-              Add email address to queue manually
-            </Button>
+      <Box padding={2}>
+        <Stack gap={2} maxWidth={960}>
+          <Box
+            textAlign={"center"}
+            position={"sticky"}
+            top={0}
+            padding={2}
+            borderBottom={`1px solid ${theme.palette.divider}`}
+            zIndex={9}
+            bgcolor={`${theme.palette.background.default}80`}
+          >
+            <Box mb={1}>
+              <Button
+                onClick={() => {
+                  setAddDialogOpen(true);
+                  setAddDialogJapanese(false);
+                  setAddDialogAddress("");
+                  setTimeout(() => textFieldInputRef.current?.focus());
+                }}
+                variant="filled"
+              >
+                Add address manually
+              </Button>{" "}
+              <Button
+                onClick={() => {
+                  setAddDialogOpen(true);
+                  setAddDialogJapanese(true);
+                  setAddDialogAddress("");
+                  setTimeout(() => textFieldInputRef.current?.focus());
+                }}
+                variant="tonal"
+              >
+                Add address manually (Japanese)
+              </Button>
+            </Box>
+            <Box>
+              Up next:{" "}
+              {(listState
+                .slice()
+                .reverse()
+                .find((item) => item.fulfilled)?.serial_num ?? 0) + 1}{" "}
+              &middot; Queue length:{" "}
+              {listState.filter((item) => !item.fulfilled).length}
+            </Box>
           </Box>
-          <Divider />
           <List>
             <TransitionGroup>
               {listState.map((item) => (
@@ -199,14 +250,14 @@ export default function Admin({
                         variant="text"
                       >
                         Delete
-                      </Button>
+                      </Button>{" "}
                       <Button
                         disabled={item.fulfilled}
                         onClick={() => markFulfilled(item.id)}
                         variant="outlined"
                       >
                         Mark as fulfilled
-                      </Button>
+                      </Button>{" "}
                       <Button
                         onClick={() => callItem(item.id)}
                         disabled={item.called || callPending}
@@ -234,14 +285,22 @@ export default function Admin({
             disabled={addDialogLoading}
             value={addDialogAddress}
             onChange={(e) => setAddDialogAddress(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onAddConfirm();
+            }}
+            sx={{ width: "100%" }}
+            margin="normal"
+            inputRef={textFieldInputRef}
           />
-          <Box>
-            <Checkbox
-              value={addDialogJapanese}
-              onChange={(e) => setAddDialogJapanese(e.target.checked)}
-            />{" "}
-            Japanese
-          </Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={addDialogJapanese}
+                onChange={(e) => setAddDialogJapanese(e.target.checked)}
+              />
+            }
+            label="Localize emails in Japanese"
+          />
         </DialogContent>
         <DialogActions>
           <Button

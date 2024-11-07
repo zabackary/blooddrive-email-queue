@@ -33,15 +33,15 @@ export function sendMail(recipient: string, japanese: boolean) {
     ? "高校生徒会のFall Festival献血運動"
     : `HS StuCo Fall Festival Blood Drive`;
   const emailSubject = japanese
-    ? "もうすぐ予定時間です！"
+    ? "献血のお呼び出しのご案内"
     : `Your turn is coming up!`;
   const emailContent = template(EMAIL_TEMPLATE, {
     version: APP_VERSION,
     greeting: japanese ? "こんにちは！" : "Hi there!",
     msg: japanese
-      ? "献血運動の予定時間はもうすぐです。MPRへお進みください。"
-      : "Your turn for the blood drive is coming up soon. Please go to the MPR!",
-    thanks: japanese ? "ご利用ありがとうございます。" : "Thank you!",
+      ? "献血の待合室の席が空きましたので、MPRにお越しください。"
+      : "Your turn for the blood drive is coming up soon. Please proceed to the MPR.",
+    thanks: japanese ? "ありがとうございます。" : "Thank you!",
     recipient,
     event_name: config.eventName,
     contact_name: config.contactName,
@@ -52,8 +52,8 @@ export function sendMail(recipient: string, japanese: boolean) {
     MailApp.sendEmail({
       name: emailName,
       body: japanese
-        ? "献血運動の予定時間はもうすぐです。MPRへお進みください。"
-        : "Your turn for the blood drive is coming up soon. Please go to the MPR!",
+        ? "献血の待合室の席が空きましたので、MPRにお越しください。"
+        : "Your turn for the blood drive is coming up soon. Please proceed to the MPR.",
       htmlBody: emailContent,
       replyTo: import.meta.env.CLIENT_CONTACT_EMAIL,
       subject: emailSubject,
