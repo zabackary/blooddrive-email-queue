@@ -38,6 +38,16 @@ export default function App() {
       setConfig(config);
     })();
   }, [supabaseClient]);
+  useEffect(() => {
+    navigator.wakeLock
+      .request("screen")
+      .then((sentinel) => {
+        console.log("wake lock on", sentinel);
+      })
+      .catch((e) => {
+        console.error("wake lock failed", e);
+      });
+  }, []);
   const [page, setPage] = useState<PageName>("home");
 
   return (

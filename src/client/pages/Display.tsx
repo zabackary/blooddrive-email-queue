@@ -118,7 +118,7 @@ export default function Display({
           {listState.filter((item) => !item.fulfilled).length}
         </Typography>
         <Typography variant="h3" textAlign="center">
-          列の人数
+          順番待ち人数
         </Typography>
       </Stack>
       {displayCode && (
@@ -134,7 +134,7 @@ export default function Display({
             Scan the QR code to join the queue
           </Typography>
           <Typography variant="h5" textAlign="center">
-            列に入るには、二次元コードをスキャンしてください。
+            お並びになる方は、二次元コードをスキャンしてください
           </Typography>
           <Box
             component={"img"}
