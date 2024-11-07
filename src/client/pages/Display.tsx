@@ -133,14 +133,17 @@ export default function Display({
           <Typography variant="h4" textAlign="center">
             Scan the QR code to join the queue
           </Typography>
+          <Typography variant="h5" textAlign="center">
+            列に入るには、二次元コードをスキャンしてください。
+          </Typography>
           <Box
             component={"img"}
             src="https://quickchart.io/qr?size=800x800&text=https://caj.ac.jp/queue.html"
             width="100%"
             borderRadius={8}
           />
-          <Typography variant="h5" textAlign="center">
-            列に入るには、二次元コードをスキャンしてください。
+          <Typography textAlign="center">
+            https://caj.ac.jp/queue.html
           </Typography>
         </Stack>
       )}
