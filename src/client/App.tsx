@@ -1,44 +1,39 @@
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import Admin from "./pages/Admin";
+import UserEditor from "./pages/Display";
 import Home from "./pages/Home";
-import UserEditor from "./pages/UserEditor";
 import { M3ThemeProvider, M3TokensProvider } from "./theme";
 
-type PageName = "home" | "user-editor" | "admin";
+type PageName = "home" | "display" | "admin";
 
 export interface AppConfig {
-  id: string;
-  created_at: string;
   name: string;
-  paid_information: string;
-  paid_information_alt: string;
-  contact_name: string;
-  contact_email: string;
-  paid_is_unlocked: boolean | null;
-  templates: {
-    id: string;
-    name: string;
-  }[];
+  id: number;
+  description: string;
 }
 
 export default function App() {
   const [config, setConfig] = useState<AppConfig | null>(null);
-  const [supabaseClient] = useState(() =>
-    createClient(
+  const [supabaseClient] = useState(() => {
+    const client = createClient(
       import.meta.env.CLIENT_SUPABASE_URL ?? "",
       import.meta.env.CLIENT_SUPABASE_ANON_KEY ?? ""
-    )
-  );
+    );
+    client.auth.signInWithPassword({
+      email: "zcheng27@caj.ac.jp",
+      password: "responsible", // hardcoding, great
+    });
+    return client;
+  });
   useEffect(() => {
     (async () => {
-      const config = (
-        await supabaseClient.functions.invoke("instance-data", {
-          body: {
-            id: import.meta.env.CLIENT_INSTANCE_ID ?? "",
-          },
-        })
-      ).data;
+      const { data: config, error } = await supabaseClient
+        .from("instance")
+        .select("*")
+        .eq("id", import.meta.env.CLIENT_INSTANCE_ID ?? "")
+        .single();
+      if (error) throw error;
       setConfig(config);
     })();
   }, [supabaseClient]);
@@ -51,12 +46,12 @@ export default function App() {
           page === "home" ? (
             <Home
               onAdmin={() => setPage("admin")}
-              onUser={() => setPage("user-editor")}
+              onUser={() => setPage("display")}
             />
           ) : page === "admin" ? (
             <Admin supabaseClient={supabaseClient} instanceId={config.id} />
           ) : (
-            <UserEditor supabaseClient={supabaseClient} config={config} />
+            <UserEditor supabaseClient={supabaseClient} />
           )
         ) : (
           "Loading..."

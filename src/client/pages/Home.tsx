@@ -9,9 +9,9 @@ export default function Home({
 }) {
   return (
     <Box>
-      <Stack>
+      <Stack justifyContent={"center"}>
         <Button onClick={onAdmin}>Open admin panel</Button>
-        <Button onClick={onUser}>Open user photo interface</Button>
+        <Button onClick={onUser}>Open user display</Button>
       </Stack>
     </Box>
   );
