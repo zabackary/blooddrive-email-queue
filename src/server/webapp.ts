@@ -60,7 +60,7 @@ export function sendMail(recipient: string, japanese: boolean) {
       to: recipient,
     });
   } catch (e) {
-    console.error("failed to send");
+    console.error("failed to send", e);
     return {
       status: "error",
       message: String(e),

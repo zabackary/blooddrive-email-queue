@@ -160,17 +160,25 @@ export default function Admin({
     const realItem = listState.find((state) => state.id === id)!;
     setCallPending(true);
     google.script.run
-      .withSuccessHandler(() => {
-        supabaseClient
-          .from("queue_item")
-          .update({
-            called: true,
-          })
-          .eq("id", id)
-          .single()
-          .then(() => {
-            setCallPending(false);
-          });
+      .withSuccessHandler((data: any) => {
+        if (data?.status === "success") {
+          supabaseClient
+            .from("queue_item")
+            .update({
+              called: true,
+            })
+            .eq("id", id)
+            .single()
+            .then(() => {
+              setCallPending(false);
+            });
+          snackbar.showSnackbar(`Called person`);
+        } else {
+          snackbar.showSnackbar(
+            `Failed to call person: ${data?.message || "Unknown error"}`
+          );
+          setCallPending(false);
+        }
       })
       .withFailureHandler(() => {
         alert("failed to call person");
