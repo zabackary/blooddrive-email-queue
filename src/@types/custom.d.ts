@@ -8,3 +8,15 @@ interface GlobalAppConfig {
 }
 
 declare const APP_CONFIG: GlobalAppConfig;
+
+interface CustomEventMap {
+  singularAppInitialized: CustomEvent<SingularApp>;
+}
+
+declare global {
+  interface WindowEventMap extends CustomEventMap {}
+
+  interface Window {
+    singularApp?: SingularApp;
+  }
+}

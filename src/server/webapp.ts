@@ -30,8 +30,8 @@ export function sendMail(recipient: string, japanese: boolean) {
   // send the mail!
   console.log("sending mail to", recipient);
   const emailName = japanese
-    ? "高校生徒会のFall Festival献血運動"
-    : `HS StuCo Fall Festival Blood Drive`;
+    ? "Fall Festival献血運動"
+    : `Fall Festival Blood Drive`;
   const emailSubject = japanese
     ? "献血のお呼び出しのご案内"
     : `Your turn is coming up!`;

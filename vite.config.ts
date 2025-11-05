@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { inline } from "@css-inline/css-inline";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { exec as nodeExec } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -21,16 +21,12 @@ export default defineConfig(async ({ command, mode, ssrBuild: _ssrBuild }) => {
     define: {
       __BUILD_TIMESTAMP__: `"${new Date().toISOString()}"`,
       __VERSION__: `"${packageJson.version}"`,
-      __COMMIT_HASH__: `"${
-        (
-          await exec("git rev-parse --short HEAD")
-        ).stdout.trim()
-      }"`,
+      __COMMIT_HASH__: `"${(
+        await exec("git rev-parse --short HEAD")
+      ).stdout.trim()}"`,
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
       EMAIL_TEMPLATE: JSON.stringify(
-        inline(
-          await readFile("./src/server/email.html", { encoding: "utf-8" }),
-        ),
+        inline(await readFile("./src/server/email.html", { encoding: "utf-8" }))
       ),
     },
     envPrefix: "CLIENT_",
@@ -48,14 +44,18 @@ export default defineConfig(async ({ command, mode, ssrBuild: _ssrBuild }) => {
           entryFileNames: "[name].js",
         },
         input: {
-          ...(env.VITE_ONLYCLIENT ? {} : {
-            server: fileURLToPath(
-              new URL("./src/server/index.ts", import.meta.url),
-            ),
-          }),
-          ...(env.VITE_ONLYSERVER ? {} : {
-            client: fileURLToPath(new URL("./index.html", import.meta.url)),
-          }),
+          ...(env.VITE_ONLYCLIENT
+            ? {}
+            : {
+                server: fileURLToPath(
+                  new URL("./src/server/index.ts", import.meta.url)
+                ),
+              }),
+          ...(env.VITE_ONLYSERVER
+            ? {}
+            : {
+                client: fileURLToPath(new URL("./index.html", import.meta.url)),
+              }),
         },
       },
       chunkSizeWarningLimit: Infinity,
@@ -65,9 +65,7 @@ export default defineConfig(async ({ command, mode, ssrBuild: _ssrBuild }) => {
       minify: !env.VITE_ONLYSERVER,
     },
     plugins: [
-      react({
-        include: "**/*.{jsx,tsx}",
-      }),
+      react(),
       gasTopLevel({
         entry: /src\/server\/index.ts/,
         distEntry: /server/,

@@ -1,17 +1,20 @@
+import { ThemeProvider } from "@mui/material";
 import { createClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import {
+  createM3Theme,
+  theme as m3Theme,
+  Variant,
+} from "mui-material-expressive";
+import { useEffect, useMemo, useState } from "react";
 import Admin from "./pages/Admin";
 import Display from "./pages/Display";
 import Home from "./pages/Home";
-import { M3ThemeProvider, M3TokensProvider } from "./theme";
 import { SnackbarProvider } from "./useSnackbar";
 
 type PageName = "home" | "display" | "display-code" | "admin";
 
 export interface AppConfig {
-  name: string;
   id: number;
-  description: string;
 }
 
 export default function App() {
@@ -50,42 +53,68 @@ export default function App() {
   }, []);
   const [page, setPage] = useState<PageName>("home");
 
+  const theme = useMemo(
+    () =>
+      createM3Theme(
+        {
+          baseColorHex: "#000088",
+          themeMode: m3Theme.ThemeMode.LIGHT,
+          variant: Variant.CONTENT,
+        },
+        {
+          body: [
+            "Montserrat",
+            "Roboto",
+            "Arial",
+            '"Noto Color Emoji"',
+            "sans-serif",
+          ].join(","),
+          heading: [
+            "Montserrat",
+            "Roboto",
+            "Arial",
+            '"Noto Color Emoji"',
+            "sans-serif",
+          ].join(","),
+        }
+      ),
+    []
+  );
+
   return (
-    <M3TokensProvider>
-      <M3ThemeProvider>
-        <SnackbarProvider
-          defaultSnackbarOptions={{
-            snackbarProps: {
-              anchorOrigin: {
-                horizontal: "center",
-                vertical: "bottom",
-              },
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider
+        defaultSnackbarOptions={{
+          snackbarProps: {
+            anchorOrigin: {
+              horizontal: "center",
+              vertical: "bottom",
             },
-          }}
-        >
-          {config ? (
-            page === "home" ? (
-              <Home
-                onAdmin={() => setPage("admin")}
-                onUser={() => setPage("display")}
-                onUserCode={() => setPage("display-code")}
-              />
-            ) : page === "admin" ? (
-              <Admin supabaseClient={supabaseClient} instanceId={config.id} />
-            ) : page === "display-code" ? (
-              <Display
-                supabaseClient={supabaseClient}
-                instanceId={config.id}
-                displayCode
-              />
-            ) : (
-              <Display supabaseClient={supabaseClient} instanceId={config.id} />
-            )
+          },
+        }}
+      >
+        {config ? (
+          page === "home" ? (
+            <Home
+              onAdmin={() => setPage("admin")}
+              onUser={() => setPage("display")}
+              onUserCode={() => setPage("display-code")}
+            />
+          ) : page === "admin" ? (
+            <Admin supabaseClient={supabaseClient} instanceId={config.id} />
+          ) : page === "display-code" ? (
+            <Display
+              supabaseClient={supabaseClient}
+              instanceId={config.id}
+              displayCode
+            />
           ) : (
-            "Loading..."
-          )}
-        </SnackbarProvider>
-      </M3ThemeProvider>
-    </M3TokensProvider>
+            <Display supabaseClient={supabaseClient} instanceId={config.id} />
+          )
+        ) : (
+          "Loading..."
+        )}
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 }

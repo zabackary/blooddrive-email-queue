@@ -12,7 +12,6 @@ import {
   List,
   ListItem,
   ListItemAvatar,
-  ListItemSecondaryAction,
   ListItemText,
   Slide,
   Stack,
@@ -183,8 +182,8 @@ export default function Admin({
 
   return (
     <>
-      <Box padding={2}>
-        <Stack gap={2} maxWidth={960}>
+      <Box padding={2} display="flex" justifyContent="center">
+        <Stack gap={2} maxWidth={960} width="100%">
           <Box
             textAlign={"center"}
             position={"sticky"}
@@ -232,9 +231,26 @@ export default function Admin({
             <TransitionGroup>
               {listState.map((item) => (
                 <Collapse key={item.id}>
-                  <ListItem sx={{ opacity: item.fulfilled ? 0.5 : 1 }}>
+                  <ListItem
+                    sx={{ opacity: item.fulfilled ? 0.5 : 1, flexWrap: "wrap" }}
+                  >
                     <ListItemAvatar>
-                      <Avatar>{item.serial_num}</Avatar>
+                      <Avatar
+                        sx={{
+                          bgcolor: item.fulfilled
+                            ? theme.palette.surfaceContainerHighest.main
+                            : item.called
+                            ? theme.palette.warning.main
+                            : theme.palette.primary.main,
+                          color: item.fulfilled
+                            ? theme.palette.surfaceContainerHighest.contrastText
+                            : item.called
+                            ? theme.palette.warning.contrastText
+                            : theme.palette.primary.contrastText,
+                        }}
+                      >
+                        {item.serial_num}
+                      </Avatar>
                     </ListItemAvatar>
                     <ListItemText
                       primary={item.email}
@@ -244,10 +260,11 @@ export default function Admin({
                         item.japanese ? "✅" : "❌"
                       }`}
                     />
-                    <ListItemSecondaryAction>
+                    <Stack direction="row" spacing={1}>
                       <Button
                         onClick={() => deleteItem(item.id)}
                         variant="text"
+                        color="error"
                       >
                         Delete
                       </Button>{" "}
@@ -265,7 +282,7 @@ export default function Admin({
                       >
                         Call
                       </Button>
-                    </ListItemSecondaryAction>
+                    </Stack>
                   </ListItem>
                 </Collapse>
               ))}

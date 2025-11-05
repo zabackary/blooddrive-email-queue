@@ -77,7 +77,11 @@ export default function Display({
   const theme = useTheme();
 
   return (
-    <Stack direction="row" height="100%">
+    <Stack
+      direction="row"
+      height="100%"
+      bgcolor={theme.palette.surfaceContainerLow.main}
+    >
       <Stack
         direction="column"
         flexBasis={displayCode ? "33%" : "50%"}
@@ -129,6 +133,7 @@ export default function Display({
           borderLeft={`1px solid ${theme.palette.divider}`}
           padding={3}
           gap={2}
+          bgcolor={theme.palette.surfaceContainerHigh.main}
         >
           <Typography variant="h4" textAlign="center">
             Scan the QR code to join the queue

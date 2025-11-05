@@ -8,9 +8,6 @@ export default function loadConfig(
   properties: GoogleAppsScript.Properties.Properties = PropertiesService.getScriptProperties()
 ) {
   return {
-    uploadFolder:
-      properties.getProperty(SCRIPT_PROPERTY_UPLOAD_FOLDER) ??
-      String(import.meta.env.VITE_UPLOAD_FOLDER),
     eventName:
       properties.getProperty(SCRIPT_PROPERTY_EVENT_NAME) ??
       String(import.meta.env.VITE_EVENT_NAME),
